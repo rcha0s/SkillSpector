@@ -231,6 +231,15 @@ ruff check src/
 mypy src/
 ```
 
+### Release Management
+
+```bash
+# Publish a new version to nv-shared-pypi artifactory
+python release.py --version major --user user@nvidia.com  # 0.1.0 -> 1.0.0
+python release.py --version minor --user user@nvidia.com  # 0.1.0 -> 0.2.0
+python release.py --version patch --user user@nvidia.com  # 0.1.0 -> 0.1.1
+```
+
 ### Project Structure
 
 ```
