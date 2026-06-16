@@ -11,6 +11,7 @@ GITHUB_EXPECTED_COMPONENT="${SKILLSPECTOR_DOCKER_GITHUB_EXPECTED_COMPONENT:-READ
 run() {
   printf "\n>> %s\n" "$*"
   "$@"
+  return
 }
 
 validate_json_report() {
@@ -19,6 +20,7 @@ validate_json_report() {
   test -s "${REPO_DIR}/${report_path}"
   run docker run --rm --entrypoint python -v "${REPO_DIR}:/scan" "${IMAGE}" \
     -m json.tool "/scan/${report_path}" >/dev/null
+  return
 }
 
 assert_report_contains_component() {
@@ -28,6 +30,7 @@ assert_report_contains_component() {
   run docker run --rm --entrypoint python -v "${REPO_DIR}:/scan" "${IMAGE}" \
     -c 'import json, sys; data = json.load(open("/scan/" + sys.argv[1])); expected = sys.argv[2]; assert any(c.get("path") == expected for c in data.get("components", [])), f"missing component: {expected}"' \
     "${report_path}" "${expected_component}"
+  return
 }
 
 scan_github_url() {
@@ -48,6 +51,7 @@ scan_github_url() {
   validate_json_report "${GITHUB_REPORT}"
   assert_report_contains_component "${GITHUB_REPORT}" "${GITHUB_EXPECTED_COMPONENT}"
   echo "GitHub URL scan completed with accepted exit code ${github_scan_status}"
+  return
 }
 
 run docker run --rm "${IMAGE}" --version
